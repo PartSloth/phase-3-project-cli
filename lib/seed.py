@@ -6,7 +6,9 @@ def seed_database():
     Element.drop_table()
     Element.create_table()
 
-    Element.create('H', 1, 1.01)
+    Element.create('Hydrogen', 'H', 1, 1.01)
+    Element.create('Carbon', 'C', 12, 12.01)
+    Element.create('Oxygen', 'O', 16, 16.0)
 
 seed_database()
 print("Seeded database")

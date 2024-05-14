@@ -3,13 +3,26 @@ from models.__init__ import CURSOR, CONN
 class Element:
     all = {}
 
-    def __init__(self, letter, number, mass, id = None):
+    def __init__(self, name, letter, number, mass, id = None):
+        self.name = name
         self.letter = letter
         self.mass = mass
         self.number = number
 
     def __repr__(self):
-        return f"<Element {self.id}: {self.letter}, {self.number}, {self.mass}>"
+        return f"<Element {self.id}: {self.name}, {self.letter}, {self.number}, {self.mass}>"
+    
+    @property
+    def name(self):
+        return self._name
+    
+    @name.setter
+    def name(self, name):
+        if isinstance(name, str):
+            formatted_name = name.capitalize()
+            self._name = formatted_name
+        else:
+            raise Exception("Name must be a string.")
 
     @property
     def letter(self):
@@ -50,6 +63,7 @@ class Element:
         sql = """
             CREATE TABLE IF NOT EXISTS elements (
             id INTEGER PRIMARY KEY,
+            name TEXT,
             letter TEXT,
             number INT,
             mass FLOAT)
@@ -69,19 +83,19 @@ class Element:
 
     def save(self):
         sql = """
-            INSERT INTO elements (letter, number, mass)
-            VALUES (?, ?, ?)
+            INSERT INTO elements (name, letter, number, mass)
+            VALUES (?, ?, ?, ?)
         """
 
-        CURSOR.execute(sql, (self.letter, self.number, self.mass))
+        CURSOR.execute(sql, (self.name, self.letter, self.number, self.mass))
         CONN.commit()
 
         self.id = CURSOR.lastrowid
         type(self).all[self.id] = self
     
     @classmethod
-    def create(cls, letter, number, mass):
-        element = cls(letter, number, mass)
+    def create(cls, name, letter, number, mass):
+        element = cls(name, letter, number, mass)
         element.save()
         return element
     
@@ -89,11 +103,12 @@ class Element:
     def instance_from_db(cls, row):
         element = cls.all.get(row[0])
         if element:
-            element.letter = row[1]
-            element.number = row[2]
-            element.mass = row[3]
+            element.name = row[1]
+            element.letter = row[2]
+            element.number = row[3]
+            element.mass = row[4]
         else:
-            element = cls(row[1], row[2], row[3])
+            element = cls(row[1], row[2], row[3], row[4])
             element.id = row[0]
             cls.all[element.id] = element
         return element
