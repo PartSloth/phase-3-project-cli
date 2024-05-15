@@ -1,7 +1,7 @@
 from models.__init__ import CURSOR, CONN
 
 class Food:
-    
+
     all = {}
 
     def __init__(self, name, qty, type, pantry_id = None, id = None):
@@ -17,7 +17,7 @@ class Food:
     @name.setter
     def name(self, name):
         if isinstance(name, str) and len(name) > 2:
-            self._name = name
+            self._name = name.capitalize()
         else:
             raise Exception("Name must be a string that is longer than 2 characters.")
 
@@ -27,8 +27,9 @@ class Food:
     
     @qty.setter
     def qty(self, qty):
-        if isinstance(qty, int) and 1 <= qty <= 10:
-            self._qty = qty
+        qty_int = int(qty)
+        if 1 <= qty_int <= 10:
+            self._qty = qty_int
         else:
             raise Exception("Qty must be an integer between 1-10 inclusive.")
 
@@ -51,7 +52,8 @@ class Food:
             name TEXT,
             qty INTEGER,
             type TEXT,
-            pantry_id INTEGER)
+            pantry_id INTEGER,
+            FOREIGN KEY (pantry_id) REFERENCES pantry(id))
         """
 
         CURSOR.execute(sql)
@@ -84,6 +86,19 @@ class Food:
         food.save()
         return food
     
+    def delete(self):
+        sql = """
+            DELETE FROM foods
+            WHERE id = ?
+        """
+
+        CURSOR.execute(sql, (self.id,))
+        CONN.commit()
+
+        del type(self).all[self.id]
+
+        self.id = None
+    
     @classmethod
     def instance_from_db(cls, row):
         food = cls.all.get(row[0])
@@ -107,3 +122,36 @@ class Food:
 
         rows = CURSOR.execute(sql).fetchall()
         return [cls.instance_from_db(row) for row in rows]
+    
+    @classmethod
+    def find_by_id(cls, id):
+        sql = """
+            SELECT *
+            FROM foods
+            WHERE id = ?
+        """
+
+        row = CURSOR.execute(sql, (id,)).fetchone()
+        return cls.instance_from_db(row) if row else None
+    
+    @classmethod
+    def find_by_pantry(cls, pantry_id):
+        sql = """
+            SELECT *
+            FROM foods
+            WHERE pantry_id = ?
+        """
+
+        rows = CURSOR.execute(sql, (pantry_id,)).fetchall()
+        return [cls.instance_from_db(row) for row in rows]
+    
+    @classmethod
+    def find_by_name(cls, name):
+        sql = """
+            SELECT *
+            FROM foods
+            WHERE name = ?
+        """
+
+        row = CURSOR.execute(sql, (name,)).fetchone()
+        return cls.instance_from_db(row) if row else None

@@ -10,7 +10,9 @@ def seed_database():
     
     Pantry.create("Johnny")
     Pantry.create("Beth")
-    Food.create('Extra Virgin Olive Oil', 1, "Oil", 1)
+    Food.create('Extra virgin olive oil', 1, "Oil", 1)
+    Food.create('Spaghetti', 3, "Pasta", 1)
+    Food.create('Canola oil', 1, 'Oil', 2)
 
 seed_database()
 print("Seeded database")

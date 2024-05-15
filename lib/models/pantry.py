@@ -18,7 +18,7 @@ class Pantry:
     
     @owner.setter
     def owner(self, owner):
-        if isinstance(owner, str) and len(owner) > 0:
+        if isinstance(owner, str) and len(owner) > 0 and not owner.isdigit():
             format_owner = owner.capitalize()
             self._owner = format_owner
         else:
@@ -44,6 +44,12 @@ class Pantry:
         CURSOR.execute(sql)
         CONN.commit()
 
+    @classmethod
+    def create(cls, owner):
+        pantry = cls(owner)
+        pantry.save()
+        return pantry
+
     def save(self):
         sql = """
             INSERT INTO pantries (owner)
@@ -55,12 +61,30 @@ class Pantry:
 
         self.id = CURSOR.lastrowid
         type(self).all[self.id] = self
+    
+    def update(self):
+        sql = """
+            UPDATE pantries
+            SET owner = ?
+            WHERE id = ?
+        """
+        CURSOR.execute(sql, (self.owner, self.id))
+        CONN.commit()
 
-    @classmethod
-    def create(cls, owner):
-        pantry = cls(owner)
-        pantry.save()
-        return pantry
+        type(self).all[self.id] = self
+    
+    def delete(self):
+        sql = """
+            DELETE FROM pantries
+            WHERE id = ?
+        """
+
+        CURSOR.execute(sql, (self.id,))
+        CONN.commit()
+
+        del type(self).all[self.id]
+
+        self.id = None
     
     @classmethod
     def instance_from_db(cls, row):
@@ -82,3 +106,26 @@ class Pantry:
 
         rows = CURSOR.execute(sql).fetchall()
         return [cls.instance_from_db(row) for row in rows]
+    
+    @classmethod
+    def find_by_id(cls, id):
+        sql = """
+            SELECT *
+            FROM pantries
+            WHERE id = ?
+        """
+
+        row = CURSOR.execute(sql, (id,)).fetchone()
+        return cls.instance_from_db(row) if row else None
+    
+    @classmethod
+    def find_by_owner(cls, owner):
+        sql = """
+            SELECT *
+            FROM pantries
+            WHERE owner = ?
+        """
+
+        row = CURSOR.execute(sql, (owner,)).fetchone()
+        return cls.instance_from_db(row) if row else None
+    
