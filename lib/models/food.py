@@ -1,6 +1,7 @@
 from models.__init__ import CURSOR, CONN
 
 class Food:
+    
     all = {}
 
     def __init__(self, name, qty, type, pantry_id = None, id = None):
