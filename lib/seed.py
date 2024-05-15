@@ -1,14 +1,16 @@
 from models.__init__ import CONN, CURSOR
-from models.molecule import Molecule
-from models.element import Element
+from models.pantry import Pantry
+from models.food import Food
 
 def seed_database():
-    Element.drop_table()
-    Element.create_table()
-
-    Element.create('Hydrogen', 'H', 1, 1.01)
-    Element.create('Carbon', 'C', 12, 12.01)
-    Element.create('Oxygen', 'O', 16, 16.0)
+    Food.drop_table()
+    Pantry.drop_table()
+    Food.create_table()
+    Pantry.create_table()
+    
+    Pantry.create("Johnny")
+    Pantry.create("Beth")
+    Food.create('Extra Virgin Olive Oil', 1, "Oil", 1)
 
 seed_database()
 print("Seeded database")

@@ -1,12 +1,12 @@
 # lib/helpers.py
-from models.element import Element
-from models.molecule import Molecule
+from models.food import Food
+from models.pantry import Pantry
 
-def list_elements():
-    elements = Element.get_all()
+def list_foods():
+    foods = Food.get_all()
     print("***")
-    for element in elements:
-        print(f"{element.name} ({element.letter})")
+    for food in foods:
+        print(f"{food.name} ({food.qty})")
     print("***")
 
 def exit_program():

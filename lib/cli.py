@@ -2,7 +2,7 @@
 
 from helpers import (
     exit_program,
-    list_elements
+    list_foods
 )
 
 
@@ -13,7 +13,7 @@ def main():
         if choice == "0":
             exit_program()
         elif choice == "1":
-            list_elements()
+            list_foods()
         else:
             print("Invalid choice")
 
@@ -21,7 +21,7 @@ def main():
 def menu():
     print("Please select an option:")
     print("0. Exit the program")
-    print("1. List elements")
+    print("1. List foods")
 
 
 if __name__ == "__main__":
