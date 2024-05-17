@@ -168,3 +168,15 @@ class Food:
 
         row = CURSOR.execute(sql, (name,)).fetchone()
         return cls.instance_from_db(row) if row else None
+    
+    @classmethod
+    def find_by_category(cls, type, pantry_id):
+        sql = """
+            SELECT *
+            FROM foods
+            WHERE type = ? AND pantry_id = ?
+            ORDER BY name;
+        """
+
+        rows = CURSOR.execute(sql, (type, pantry_id)).fetchall()
+        return [cls.instance_from_db(row) for row in rows]

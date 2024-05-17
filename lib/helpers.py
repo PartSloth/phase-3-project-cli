@@ -12,9 +12,12 @@ def exit_program():
 
 def list_pantries():
     pantries = Pantry.get_all()
-    prLightPurple(" \n---Pantries---")
-    for pantry in pantries:
-        print(f"{pantry.owner}")
+    prLightPurple(" \n--- Pantries ---")
+    if len(pantries) > 0:
+        for pantry in pantries:
+            print(f"{pantry.owner}")
+    else:
+        print("There are no pantries. Please add a pantry!")
 
 def choose_pantry():
     prLightPurple(" \n--- Choosing Pantry ---")
@@ -35,7 +38,7 @@ def add_pantry():
         prRed(exc)
 
 def update_owner(pantry_id):
-    prLightPurple(" \n---Updating Pantry---")
+    prLightPurple(" \n--- Updating Pantry ---")
     if pantry := Pantry.find_by_id(pantry_id):
         try:
             name = input("Enter name of the pantry's new owner > ").strip().capitalize()
@@ -60,7 +63,7 @@ def list_foods(pantry_id):
         print("This pantry is empty.")
 
 def add_food(pantry_id):
-    prLightPurple(" \n---Adding Food---")
+    prLightPurple(" \n--- Adding Food ---")
     name = input("Enter name of the food > ").capitalize()
     while Food.find_by_name(name):
         owner = Pantry.find_by_id(Food.find_by_name(name).pantry_id).owner
@@ -75,6 +78,19 @@ def add_food(pantry_id):
         prRed("Error adding food: ")
         prRed(exc)
 
+def delete_pantry(pantry_id = None):
+    if pantry_id == None:
+        prLightPurple(" \n--- Deleting Pantry ---")
+        owner = input("Enter the name of the pantry owner > ").capitalize()
+        pantry = Pantry.find_by_owner(owner)
+        if pantry == None:
+            prRed("This pantry doesn't exist.")
+        else:
+            pantry.delete()
+    else:
+        pantry = Pantry.find_by_id(pantry_id)
+        pantry.delete()
+
 def category_select():
     type_dict = {"A": "Canned Goods",
                  "B": "Baking Staples",
@@ -82,29 +98,32 @@ def category_select():
                  "G": "Grains",
                  "M": "Misc",
                  "N": "Snacks",
+                 "O": "Oils",
                  "P": "Pastas",
                  "S": "Spices"}
     key = input(
-        "Select the category of food. \n\
+        " \nSelect the category of food. \n\
         A - Canned Goods \n\
         B - Baking Staples \n\
         C - Condiments \n\
         G - Grains \n\
         M - Misc \n\
         N - Snacks \n\
+        O - Oils \n\
         P - Pastas \n\
         S - Spices \n\
         > ").strip().capitalize()
     while type_dict.get(key) == None:
         prRed(f"{key} is not an available selection.")
         key = input(
-        "Select the category of food. \n\
+        " \nSelect the category of food. \n\
         A - Canned Goods \n\
         B - Baking Staples \n\
         C - Condiments \n\
         G - Grains \n\
         M - Misc \n\
         N - Snacks \n\
+        O - Oils \n\
         P - Pastas \n\
         S - Spices \n\
         > ").strip().capitalize()
@@ -157,3 +176,14 @@ def update_food(food, choice):
     except Exception as exc:
         prRed("Error updating pantry: ")
         prRed(str(exc)) 
+
+def category_list(pantry_id):
+    type = category_select()
+    list = Food.find_by_category(type, pantry_id)
+    owner = Pantry.find_by_id(pantry_id).owner
+    prLightPurple(f" \n---{owner}'s {type}---")
+    if len(list) > 0:
+        for food in list:
+            print(food.name)
+    else:
+        prRed(f"{owner} doesn't have any {type.lower()}.")
