@@ -19,6 +19,16 @@ def list_pantries():
     else:
         print("There are no pantries. Please add a pantry!")
 
+def list_all_foods():
+    foods = Food.get_all()
+    pantries = Pantry.get_all()
+    for pantry in pantries:
+        prLightPurple(f" \n--- {pantry.owner}'s Pantry ---")
+        for food in foods:
+            if food.pantry_id == pantry.id:
+                print(f'{food.name} ({food.qty}) - {food.type}')
+    
+
 def choose_pantry():
     prLightPurple(" \n--- Choosing Pantry ---")
     name = input("Enter the name of the pantry owner > ").strip().capitalize()
@@ -79,7 +89,12 @@ def add_food(pantry_id):
         prRed(exc)
 
 def delete_pantry(pantry_id = None):
-    if pantry_id == None:
+    if Pantry.get_all() == None:
+        prRed("There are no pantries to delete.")
+    elif pantry_id != None: 
+        pantry = Pantry.find_by_id(pantry_id)
+        pantry.delete()
+    else:
         prLightPurple(" \n--- Deleting Pantry ---")
         owner = input("Enter the name of the pantry owner > ").capitalize()
         pantry = Pantry.find_by_owner(owner)
@@ -87,9 +102,6 @@ def delete_pantry(pantry_id = None):
             prRed("This pantry doesn't exist.")
         else:
             pantry.delete()
-    else:
-        pantry = Pantry.find_by_id(pantry_id)
-        pantry.delete()
 
 def category_select():
     type_dict = {"A": "Canned Goods",

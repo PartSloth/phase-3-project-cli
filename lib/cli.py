@@ -12,7 +12,8 @@ from helpers import (
     select_food,
     update_food,
     category_list,
-    delete_pantry
+    delete_pantry,
+    list_all_foods
 )
 
 def prLightPurple(str): print("\033[94m {}\033[00m" .format(str))
@@ -98,6 +99,8 @@ def main():
                 else:
                     prRed("Invalid choice.")
         elif choice == "1":
+            list_all_foods()
+        elif choice == "2":
             exit_program()
         else:
             prRed("Invalid choice.")
@@ -106,7 +109,8 @@ def main():
 def menu():
     print(" \nPlease select an option:")
     print("0 - List pantry owners")
-    print("1 - Exit")
+    print("1 - List foods")
+    print("2 - Exit")
 
 # Sub Menu 1
 def pantry_menu():

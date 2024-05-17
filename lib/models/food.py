@@ -131,6 +131,7 @@ class Food:
         sql = """
             SELECT *
             FROM foods
+            ORDER BY name
         """
 
         rows = CURSOR.execute(sql).fetchall()
