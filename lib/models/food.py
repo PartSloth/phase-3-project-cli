@@ -16,6 +16,8 @@ class Food:
     
     @name.setter
     def name(self, name):
+        if name in Food.all:
+            raise Exception("Food already exists in someone's pantry.")
         if isinstance(name, str) and len(name) > 2:
             self._name = name.capitalize()
         else:
@@ -78,6 +80,17 @@ class Food:
         CONN.commit()
 
         self.id = CURSOR.lastrowid
+        type(self).all[self.id] = self
+
+    def update(self):
+        sql = """
+            UPDATE foods
+            SET name = ?, qty = ?, type = ?
+            WHERE id = ?
+        """
+        CURSOR.execute(sql, (self.name, self.qty, self.type, self.id))
+        CONN.commit()
+
         type(self).all[self.id] = self
     
     @classmethod

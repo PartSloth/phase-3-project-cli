@@ -63,11 +63,19 @@ def add_food(pantry_id):
     prLightPurple(" \n---Adding Food---")
     name = input("Enter name of the food > ").capitalize()
     while Food.find_by_name(name):
-        pantry_id = Food.find_by_name(name).pantry_id
-        owner = Pantry.find_by_id(pantry_id).owner
+        owner = Pantry.find_by_id(Food.find_by_name(name).pantry_id).owner
         prRed(f"This food already exists in {owner}'s pantry")
         name = input("Enter name of the food > ").capitalize()
     qty = input("Enter the qty of food > ")
+    type = category_select()
+    try: 
+        food = Food.create(name, qty, type, pantry_id)
+        prGreen(f"Added to {Pantry.find_by_id(pantry_id).owner}'s pantry: {food.name}")
+    except Exception as exc:
+        prRed("Error adding food: ")
+        prRed(exc)
+
+def category_select():
     type_dict = {"A": "Canned Goods",
                  "B": "Baking Staples",
                  "C": "Condiments",
@@ -77,7 +85,7 @@ def add_food(pantry_id):
                  "P": "Pastas",
                  "S": "Spices"}
     key = input(
-        "Select the type of food. \n\
+        "Select the category of food. \n\
         A - Canned Goods \n\
         B - Baking Staples \n\
         C - Condiments \n\
@@ -90,7 +98,7 @@ def add_food(pantry_id):
     while type_dict.get(key) == None:
         prRed(f"{key} is not an available selection.")
         key = input(
-        "Select the type of food. \n\
+        "Select the category of food. \n\
         A - Canned Goods \n\
         B - Baking Staples \n\
         C - Condiments \n\
@@ -101,16 +109,10 @@ def add_food(pantry_id):
         S - Spices \n\
         > ").strip().capitalize()
     type = type_dict[key]
-    try: 
-        food = Food.create(name, qty, type, pantry_id)
-        prGreen(f"Added to {Pantry.find_by_id(pantry_id).owner}'s pantry: {food.name}")
-    except Exception as exc:
-        prRed("Error adding food: ")
-        prRed(exc)
+    return type
 
 def remove_food(pantry_id):
-    owner_foods = Food.find_by_pantry(pantry_id)
-    max_input = len(owner_foods)
+    max_input = len(Food.find_by_pantry(pantry_id))
     if max_input == 0:
         prRed("Pantry is empty. Please add food first!")
     else: 
@@ -123,3 +125,35 @@ def remove_food(pantry_id):
             prGreen(f"{name} has been removed from the pantry.")
         else:
             prRed("This food is not in this pantry.")
+
+def select_food(pantry_id):
+    max_input = len(Food.find_by_pantry(pantry_id))
+    if max_input == 0:
+        prRed("Pantry is empty. Please add food first!")
+    else: 
+        name = input("Which food do you want to update > ").capitalize()
+        food = Food.find_by_name(name)
+        if food == None:
+            return None
+        elif food.pantry_id == pantry_id:
+            return food
+        else:
+            return None
+
+def update_food(food, choice):
+    try:
+        if choice == "0":
+            name = input("Enter new name > ")
+            food.name = name
+        elif choice == "1":
+            qty = input("Enter new quantity > ")
+            food.qty = qty
+        elif choice == "2":
+            type = category_select()
+            food.type = type
+
+        food.update()
+        prGreen('Updated!')
+    except Exception as exc:
+        prRed("Error updating pantry: ")
+        prRed(str(exc)) 

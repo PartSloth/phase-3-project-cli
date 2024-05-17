@@ -8,7 +8,9 @@ from helpers import (
     add_pantry,
     update_owner,
     add_food,
-    remove_food
+    remove_food,
+    select_food,
+    update_food
 )
 
 def prLightPurple(str): print("\033[94m {}\033[00m" .format(str))
@@ -46,7 +48,22 @@ def main():
                             elif choice == "2":
                                 remove_food(pantry.id)
                             elif choice == "3":
-                                pass
+                                selected_food = select_food(pantry.id)
+                                if selected_food:
+                                    sub_menu_3 = True
+                                    while sub_menu_3 == True:
+                                        prLightPurple(f" \n---Updating {selected_food.name}---")
+                                        food_update_menu(pantry.owner)
+                                        choice = input("> ")
+                                        if choice == "0" or choice == "1" or choice == "2":
+                                            update_food(selected_food, choice)
+                                        elif choice == "3":
+                                            sub_menu_3 = False
+                                            print("hi")
+                                        else:
+                                            prRed("Invalid choice.")
+                                else:
+                                    prRed("This food does not exist in this pantry.")
                             elif choice == "4":
                                 sub_menu_2 = False
                             else:
@@ -66,7 +83,7 @@ def main():
 
 def menu():
     print(" \nPlease select an option:")
-    print("0 - List Pantry Owners")
+    print("0 - List pantry owners")
     print("1 - Exit")
 
 # Sub Menu 1
@@ -80,10 +97,18 @@ def pantry_menu():
 def owner_menu():
     print(" \nPlease select an option:")
     print("0 - Rename")
-    print("1 - Add New Food")
-    print("2 - Remove Food")
-    print("3 - Update Food")
+    print("1 - Add new food")
+    print("2 - Remove food")
+    print("3 - Update food")
     print("4 - Return to pantry menu")
+
+# Sub Menu 3
+def food_update_menu(name):
+    print(" \nPlease select an option:")
+    print("0 - Update name")
+    print("1 - Update quantity")
+    print("2 - Update category")
+    print(f"3 - Return to {name}'s pantry menu")
 
 if __name__ == "__main__":
     main()

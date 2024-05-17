@@ -1,4 +1,4 @@
 import sqlite3
 
-CONN = sqlite3.connect('chemstructure.db')
+CONN = sqlite3.connect('pantryfoods.db')
 CURSOR = CONN.cursor()
