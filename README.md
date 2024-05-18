@@ -30,10 +30,15 @@ Features:
 
 ## Usage
 [![File-Tree.png](https://i.postimg.cc/R0QDmwRD/File-Tree.png)](https://postimg.cc/SXRr72H6)
+
 The CLI application can be navigated using a number based menu. Users will also be able to type in responses when prompted to select specific pantries and foods.
+
 [![Main-Menu.png](https://i.postimg.cc/WztW0CPB/Main-Menu.png)](https://postimg.cc/bSc9h6rg)
+
 Examples of menu and their options below:
+
 [![Pantry-Menu.png](https://i.postimg.cc/tTqm47vC/Pantry-Menu.png)](https://postimg.cc/Tysck2XZ)
+
 [![Updating-Food-Menu.png](https://i.postimg.cc/ZRwsBZXP/Updating-Food-Menu.png)](https://postimg.cc/bD294Xyd)
   
 ## Roadmap
