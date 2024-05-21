@@ -44,7 +44,7 @@ def choose_pantry():
             print(name)
             return Pantry.find_by_owner(name)
         else:
-            prRed("Pantry does not exist.")
+            prRed(f"Input is out of bounds, maximum input is: {len(pantries) - 1}.")
     else:
         prRed("Enter numbers only.")
 
@@ -81,8 +81,10 @@ def update_owner(pantry_id):
 def list_foods(pantry_id):
     foods = Food.find_by_pantry(pantry_id)
     if len(foods) > 0:
+        x = 0
         for food in foods:
-            print(f"{food.name} ({food.qty})")  
+            print(f"{x}. {food.name} ({food.qty})")  
+            x += 1
     else:
         print("This pantry is empty.")
 
@@ -164,33 +166,38 @@ def category_select():
     return type
 
 def remove_food(pantry_id):
-    max_input = len(Food.find_by_pantry(pantry_id))
+    foods = Food.find_by_pantry(pantry_id)
+    max_input = len(foods)
     if max_input == 0:
         prRed("Pantry is empty. Please add food first!")
     else: 
-        name = input("Which food do you want to remove > ").capitalize()
-        food = Food.find_by_name(name)
-        if food == None:
-            prRed("This food does not exist in this pantry.")
-        elif food.pantry_id == pantry_id:
-            food.delete()
-            prGreen(f"{name} has been removed from the pantry.")
+        choice = input("Which food do you want to remove > ")
+        if choice.isnumeric():
+            choice = int(choice)
+            if 0 <= choice <= max_input:
+                food = foods[choice]
+                food.delete()
+                prGreen(f"{food.name} has been removed from the pantry.")
+            else:
+                prRed(f"Input is out of bounds, maximum input is: {max_input - 1}.")
         else:
-            prRed("This food is not in this pantry.")
+            prRed("Please enter numbers only.")
 
 def select_food(pantry_id):
-    max_input = len(Food.find_by_pantry(pantry_id))
+    foods = Food.find_by_pantry(pantry_id)
+    max_input = len(foods)
     if max_input == 0:
         prRed("Pantry is empty. Please add food first!")
     else: 
-        name = input("Which food do you want to update > ").capitalize()
-        food = Food.find_by_name(name)
-        if food == None:
-            return None
-        elif food.pantry_id == pantry_id:
-            return food
-        else:
-            return None
+        choice = input("Which food do you want to update > ")
+        if choice.isnumeric():
+            choice = int(choice)
+            if 0 <= choice <= max_input:
+                food = foods[choice]
+                return food
+            else:
+                prRed(f"Input is out of bounds, maximum input is: {max_input - 1}.")
+        else: prRed("Please enter numbers only.")
 
 def update_food(food, choice):
     try:

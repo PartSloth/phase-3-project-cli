@@ -67,8 +67,6 @@ def main():
                                             sub_menu_3 = False
                                         else:
                                             prRed("Invalid choice.")
-                                else:
-                                    prRed("This food does not exist in this pantry.")
                             elif choice == "5":
                                 # Sub Menu 4
                                 sub_menu_4 = True
