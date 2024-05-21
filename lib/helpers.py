@@ -2,8 +2,6 @@
 from models.food import Food
 from models.pantry import Pantry
 
-# Need to change choosing method from typing names to numbered lists.
-
 def prLightPurple(str): print("\033[94m {}\033[00m" .format(str))
 def prGreen(str): print("\033[92m {}\033[00m" .format(str))
 def prRed(str): print("\033[91m {}\033[00m" .format(str))
@@ -104,11 +102,13 @@ def add_food(pantry_id):
         prRed("Error adding food: ")
         prRed(exc)
 
-# Need to iterate through pantry's foods and remove before deleting the pantry instance.
 def delete_pantry(pantry_id = None):
     if Pantry.get_all() == None:
         prRed("There are no pantries to delete.")
     elif pantry_id != None: 
+        foods = Food.find_by_pantry(pantry_id)
+        for food in foods:
+            food.delete()
         pantry = Pantry.find_by_id(pantry_id)
         pantry.delete()
     else:
@@ -119,6 +119,9 @@ def delete_pantry(pantry_id = None):
             choice = int(choice)
             if 0 <= choice <= len(pantries):
                 pantry = pantries[choice]
+                foods = Food.find_by_pantry(pantry.id)
+                for food in foods:
+                    food.delete()
                 pantry.delete()
             else:
                 prRed("Pantry does not exist.")
