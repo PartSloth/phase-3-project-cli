@@ -1,5 +1,5 @@
 # PANTRY TRACKER
-Pantry tracker is a CLI where users can access a pantry and add or remove food from it. The application's purpose is to provide the user a text-based interface to record, view, and organize the quantity and type of foods in their pantry.
+Pantry tracker is a CLI where users can access a pantry and add or remove food from it. The application's purpose is to provide the user a text-based interface to record, view, and organize the quantity and type of foods in the pantries. This can be used, for example, in an office-setting or in a dorm with a community kitchen to keep track of which food belongs to each person.
 
 Features:
  - Pantry management: Users can add, delete, and update existing pantries.
