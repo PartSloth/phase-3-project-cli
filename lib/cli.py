@@ -34,9 +34,7 @@ def main():
                 if choice == "0":
                     list_pantries()
                     pantry = choose_pantry()
-                    if pantry == None:
-                        prRed("Pantry does not exist.")
-                    else:
+                    if pantry:
                         # Sub Menu 2
                         sub_menu_2 = True
                         while sub_menu_2 == True:

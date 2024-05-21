@@ -2,6 +2,8 @@
 from models.food import Food
 from models.pantry import Pantry
 
+# Need to change choosing method from typing names to numbered lists.
+
 def prLightPurple(str): print("\033[94m {}\033[00m" .format(str))
 def prGreen(str): print("\033[92m {}\033[00m" .format(str))
 def prRed(str): print("\033[91m {}\033[00m" .format(str))
@@ -14,8 +16,10 @@ def list_pantries():
     pantries = Pantry.get_all()
     prLightPurple(" \n--- Pantries ---")
     if len(pantries) > 0:
+        x = 0
         for pantry in pantries:
-            print(f"{pantry.owner}")
+            print(f"{x}. {pantry.owner}")
+            x += 1
     else:
         print("There are no pantries. Please add a pantry!")
 
@@ -31,8 +35,18 @@ def list_all_foods():
 
 def choose_pantry():
     prLightPurple(" \n--- Choosing Pantry ---")
-    name = input("Enter the name of the pantry owner > ").strip().capitalize()
-    return Pantry.find_by_owner(name)
+    pantries = Pantry.get_all()
+    choice = input("Enter the pantry number > ")
+    if choice.isnumeric():
+        choice = int(choice)
+        if 0 <= choice <= len(pantries):
+            name = pantries[choice].owner
+            print(name)
+            return Pantry.find_by_owner(name)
+        else:
+            prRed("Pantry does not exist.")
+    else:
+        prRed("Enter numbers only.")
 
 def add_pantry():
     prLightPurple(" \n--- Adding Pantry ---")
@@ -88,6 +102,7 @@ def add_food(pantry_id):
         prRed("Error adding food: ")
         prRed(exc)
 
+# Need to iterate through pantry's foods and remove before deleting the pantry instance.
 def delete_pantry(pantry_id = None):
     if Pantry.get_all() == None:
         prRed("There are no pantries to delete.")
@@ -96,12 +111,18 @@ def delete_pantry(pantry_id = None):
         pantry.delete()
     else:
         prLightPurple(" \n--- Deleting Pantry ---")
-        owner = input("Enter the name of the pantry owner > ").capitalize()
-        pantry = Pantry.find_by_owner(owner)
-        if pantry == None:
-            prRed("This pantry doesn't exist.")
+        pantries = Pantry.get_all()
+        choice = input("Enter the pantry number > ")
+        if choice.isnumeric():
+            choice = int(choice)
+            if 0 <= choice <= len(pantries):
+                pantry = pantries[choice]
+                pantry.delete()
+            else:
+                prRed("Pantry does not exist.")
         else:
-            pantry.delete()
+            prRed("Enter numbers only.")
+    
 
 def category_select():
     type_dict = {"A": "Canned Goods",
