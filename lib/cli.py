@@ -39,7 +39,6 @@ def sub_1():
     pantry_menu()
     choice = input("> ")
     if choice == "1":
-        list_pantries()
         pantry = choose_pantry()
         if pantry:
             while True:

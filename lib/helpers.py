@@ -13,13 +13,10 @@ def exit_program():
 def list_pantries():
     pantries = Pantry.get_all()
     prLightPurple(" \n--- Pantries ---")
-    if len(pantries) > 0:
-        x = 0
-        for pantry in pantries:
-            print(f"{x}. {pantry.owner}")
-            x += 1
-    else:
-        print("There are no pantries. Please add a pantry!")
+    for i, pantry in enumerate(pantries, 1):
+        print(f"{i}. {pantry.owner}")
+    if len(pantries) == 0:
+        prRed("There are no pantries. Please add a pantry!")
 
 def list_all_foods():
     foods = Food.get_all()
@@ -30,19 +27,17 @@ def list_all_foods():
             if food.pantry_id == pantry.id:
                 print(f'{food.name} ({food.qty}) - {food.type}')
     
-
 def choose_pantry():
     prLightPurple(" \n--- Choosing Pantry ---")
     pantries = Pantry.get_all()
     choice = input("Enter the pantry number > ")
     if choice.isnumeric():
-        choice = int(choice)
-        if 0 <= choice <= len(pantries):
-            name = pantries[choice].owner
-            print(name)
-            return Pantry.find_by_owner(name)
+        choice = int(choice) - 1
+        if 0 <= choice <= len(pantries) - 1:
+            pantry = pantries[choice]
+            return pantry
         else:
-            prRed(f"Input is out of bounds, maximum input is: {len(pantries) - 1}.")
+            prRed(f"Input is out of bounds, maximum input is: {len(pantries)}.")
     else:
         prRed("Enter numbers only.")
 
@@ -78,6 +73,7 @@ def update_owner(pantry_id):
 
 def list_foods(pantry_id):
     foods = Food.find_by_pantry(pantry_id)
+    # foods = pantry.foods()
     if len(foods) > 0:
         x = 0
         for food in foods:
@@ -89,6 +85,7 @@ def list_foods(pantry_id):
 def add_food(pantry_id):
     prLightPurple(" \n--- Adding Food ---")
     name = input("Enter name of the food > ").capitalize()
+    # while pantry.foods():
     while Food.find_by_name(name):
         owner = Pantry.find_by_id(Food.find_by_name(name).pantry_id).owner
         prRed(f"This food already exists in {owner}'s pantry")
