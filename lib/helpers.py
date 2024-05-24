@@ -19,32 +19,25 @@ def list_pantries():
         prRed("There are no pantries. Please add a pantry!")
 
 def list_all_foods():
-    foods = Food.get_all()
     pantries = Pantry.get_all()
     for pantry in pantries:
         prLightPurple(f" \n--- {pantry.owner}'s Pantry ---")
-        for food in foods:
-            if food.pantry_id == pantry.id:
-                print(f'{food.name} ({food.qty}) - {food.type}')
+        for food in pantry.foods():
+            print(f'{food.name} ({food.qty}) - {food.type}')
     
 def choose_pantry():
     prLightPurple(" \n--- Choosing Pantry ---")
     pantries = Pantry.get_all()
     choice = input("Enter the pantry number > ")
-    if choice.isnumeric():
-        choice = int(choice) - 1
-        if 0 <= choice <= len(pantries) - 1:
-            return pantries[choice]
-        else:
-            prRed(f"Input is out of bounds, maximum input is: {len(pantries)}.")
+    if validate_choice(choice, len(pantries)):
+        return pantries[int(choice) - 1]
     else:
-        prRed("Enter numbers only.")
+        prRed(f"Input must be a number with a max. input: {len(pantries)}.")
 
 def add_pantry():
     prLightPurple(" \n--- Adding Pantry ---")
     name = input("Enter the name of the pantry owner > ").strip().capitalize()
     try:
-        Pantry.is_owner_new(name)
         Pantry.create(name)
         prGreen(f"Added: {name}'s Pantry")
     except Exception as exc:
@@ -54,7 +47,6 @@ def update_owner(pantry):
     prLightPurple(" \n--- Updating Pantry ---")
     name = input("Enter name of the pantry's new owner > ").strip().capitalize()
     try:
-        Pantry.is_owner_new(name)
         pantry.owner = name
         pantry.update()
         prGreen(f'Updated: {name}')
@@ -62,9 +54,10 @@ def update_owner(pantry):
         prRed(f"Error creating pantry: {exc}")
 
 def list_foods(pantry):
+    Pantry.get_all()
     foods = pantry.foods()
     for i, food in enumerate(foods, 1):
-        print(f"{i}. {food.name} ({food.qty})")  
+        print(f"{i}. {food.name} ({food.qty}) - {food.type}")  
     if len(foods) == 0:
         print("This pantry is empty.")
 
@@ -74,8 +67,7 @@ def add_food(pantry):
     qty = input("Enter the qty of food > ")
     type = category_select()
     try: 
-        Food.is_food_new(name)
-        food = Food.create(name, qty, type, pantry.id)
+        Food.create(name, qty, type, pantry.id)
         prGreen(f"Added to {pantry.owner}'s pantry: {name}")
     except Exception as exc:
         prRed(f"Error adding food: {exc}")
@@ -92,19 +84,14 @@ def delete_pantry(pantry = None):
     else:
         prLightPurple(" \n--- Deleting Pantry ---")
         choice = input("Enter the pantry number > ")
-        if choice.isnumeric():
-            choice = int(choice) - 1
-            if 0 <= choice <= len(pantries) - 1:
-                foods = pantries[choice].foods()
-                for food in foods:
-                    food.delete()
-                pantries[choice].delete()
-            else:
-                prRed("Pantry does not exist.")
+        if validate_choice(choice, len(pantries)):
+            foods = pantries[int(choice) - 1].foods()
+            for food in foods:
+                food.delete()
+            pantries[int(choice) - 1].delete()
         else:
-            prRed("Enter numbers only.")
+            prRed("Please enter numbers of existing pantries only.")
     
-
 def category_select():
     type_dict = {"A": "Canned Goods",
                  "B": "Baking Staples",
@@ -165,13 +152,9 @@ def select_food(pantry):
         prRed("Pantry is empty. Please add food first!")
     else: 
         choice = input("Which food do you want to update > ")
-        if choice.isnumeric():
-            choice = int(choice) - 1
-            if 0 <= choice <= len(foods) - 1:
-                return foods[choice]
-            else:
-                prRed(f"Input is out of bounds, maximum input is: {len(foods)}.")
-        else: prRed("Please enter numbers only.")
+        if validate_choice(choice, len(foods)):
+            return foods[int(choice) - 1]
+        else: prRed(f"Please enter numbers only, max input: {len(foods)}")
 
 def update_food(food, choice):
     if choice == "1":
@@ -198,3 +181,9 @@ def category_list(pantry):
             print(food.name)
     else:
         prRed(f"{pantry.owner} doesn't have any {type.lower()}.")
+
+def validate_choice(choice, max_length):
+    if choice.isnumeric() and 0 <= int(choice) - 1 < max_length:
+        return True
+    else:
+        return False

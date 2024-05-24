@@ -119,10 +119,7 @@ class Pantry:
         row = CURSOR.execute(sql, (id,)).fetchone()
         return cls.instance_from_db(row) if row else None
     
-    def is_owner_new(owner):
-        if owner in Pantry.all:
-            raise Exception("This person already has a pantry.")
-    
     def foods(self):
         foods = Food.find_by_pantry(self.id)
         return foods
+    

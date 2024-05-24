@@ -16,10 +16,13 @@ class Food:
     
     @name.setter
     def name(self, name):
+        # food_names = [food.name for food in Food.get_all()]
+        # if name in food_names:
+        #     raise Exception("Food already exists in someone's pantry.")
         check_name = name.replace(" ", "").isalpha()
         if isinstance(name, str) and len(name) > 2 and check_name:
             self._name = name.capitalize()
-            type(self).all[self._name] = self
+            # type(self).all[self._name] = self
         else:
             raise Exception("Name must be a string that is more than 2 characters and does not contain numbers.")
 
@@ -159,7 +162,3 @@ class Food:
         rows = CURSOR.execute(sql, (pantry_id,)).fetchall()
         return [cls.instance_from_db(row) for row in rows]
     
-    def is_food_new(name):
-        Food.get_all()
-        if name in Food.all:
-            raise Exception("Food already exists in someone's pantry.")
