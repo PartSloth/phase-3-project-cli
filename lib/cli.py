@@ -68,9 +68,9 @@ def sub_2(pantry):
     elif choice == "3":
         add_food(pantry)
     elif choice == "4":
-        remove_food(pantry.id)
+        remove_food(pantry)
     elif choice == "5":
-        selected_food = select_food(pantry.id)
+        selected_food = select_food(pantry)
         if selected_food:
             while True:
                 sub_3(pantry, selected_food)
@@ -97,7 +97,7 @@ def sub_3(pantry, selected_food):
         sub_3(pantry, selected_food)
 
 def sub_4(pantry):
-    category_list(pantry.id)
+    category_list(pantry)
     category_menu(pantry.owner)
     choice = input("> ")
     if choice == "1":

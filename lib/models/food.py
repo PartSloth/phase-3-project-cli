@@ -16,12 +16,12 @@ class Food:
     
     @name.setter
     def name(self, name):
-        if name in Food.all:
-            raise Exception("Food already exists in someone's pantry.")
-        if isinstance(name, str) and len(name) > 2:
+        check_name = name.replace(" ", "").isalpha()
+        if isinstance(name, str) and len(name) > 2 and check_name:
             self._name = name.capitalize()
+            type(self).all[self._name] = self
         else:
-            raise Exception("Name must be a string that is longer than 2 characters.")
+            raise Exception("Name must be a string that is more than 2 characters and does not contain numbers.")
 
     @property
     def qty(self):
@@ -29,9 +29,8 @@ class Food:
     
     @qty.setter
     def qty(self, qty):
-        qty_int = int(qty)
-        if 1 <= qty_int <= 10:
-            self._qty = qty_int
+        if 1 <= int(qty) <= 10:
+            self._qty = int(qty)
         else:
             raise Exception("Qty must be an integer between 1-10 inclusive.")
 
@@ -181,3 +180,8 @@ class Food:
 
         rows = CURSOR.execute(sql, (type, pantry_id)).fetchall()
         return [cls.instance_from_db(row) for row in rows]
+    
+    def is_food_new(name):
+        Food.get_all()
+        if name in Food.all:
+            raise Exception("Food already exists in someone's pantry.")
