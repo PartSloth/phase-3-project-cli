@@ -33,6 +33,7 @@ def main():
             exit_program()
         else:
             prRed("Invalid choice.")
+            main()
 
 def sub_1():
     list_pantries()
@@ -52,6 +53,7 @@ def sub_1():
         main()
     else:
         prRed("Invalid choice.")
+        sub_1()
 
 def sub_2(pantry):
     prLightPurple(f" \n--- {pantry.owner}'s Pantry ---")
@@ -61,10 +63,10 @@ def sub_2(pantry):
     if choice == "1":
         update_owner(pantry)
     elif choice == "2":
-        delete_pantry(pantry.id)
+        delete_pantry(pantry)
         sub_1()
     elif choice == "3":
-        add_food(pantry.id)
+        add_food(pantry)
     elif choice == "4":
         remove_food(pantry.id)
     elif choice == "5":
@@ -79,6 +81,7 @@ def sub_2(pantry):
         sub_1()
     else:
         prRed("Invalid choice.")
+        sub_2(pantry)
 
 def sub_3(pantry, selected_food):
     prLightPurple(f" \n--- Updating {selected_food.name} ---")
@@ -91,6 +94,7 @@ def sub_3(pantry, selected_food):
         sub_2(pantry)
     else:
         prRed("Invalid choice.")
+        sub_3(pantry, selected_food)
 
 def sub_4(pantry):
     category_list(pantry.id)
@@ -102,6 +106,7 @@ def sub_4(pantry):
         sub_2(pantry)
     else: 
         prRed("Invalid choice.")
+        sub_4(pantry)
 
 
 def menu():
