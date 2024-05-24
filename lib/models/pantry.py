@@ -18,9 +18,10 @@ class Pantry:
     
     @owner.setter
     def owner(self, owner):
-        if isinstance(owner, str) and len(owner) > 0 and not owner.isdigit():
-            format_owner = owner.capitalize()
+        format_owner = owner.capitalize()
+        if isinstance(owner, str) and len(owner) > 0 and owner.isalpha():
             self._owner = format_owner
+            type(self).all[self._owner] = self
         else:
             raise Exception("Owner name must be a string with at least 1 character.")
         
@@ -129,3 +130,10 @@ class Pantry:
         row = CURSOR.execute(sql, (owner,)).fetchone()
         return cls.instance_from_db(row) if row else None
     
+    def is_owner_new(owner):
+        if owner in Pantry.all:
+            raise Exception("This person already has a pantry.")
+    
+    def foods(self):
+        foods = Food.find_by_pantry(self.id)
+        return foods
