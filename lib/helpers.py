@@ -34,8 +34,7 @@ def choose_pantry():
     if choice.isnumeric():
         choice = int(choice) - 1
         if 0 <= choice <= len(pantries) - 1:
-            pantry = pantries[choice]
-            return pantry
+            return pantries[choice]
         else:
             prRed(f"Input is out of bounds, maximum input is: {len(pantries)}.")
     else:
@@ -45,41 +44,28 @@ def add_pantry():
     prLightPurple(" \n--- Adding Pantry ---")
     name = input("Enter the name of the pantry owner > ").strip().capitalize()
     try:
-        while Pantry.find_by_owner(name):
-            prRed("This person already has a pantry.")
-            name = input("Please enter a new owner > ").strip().capitalize()
-        pantry = Pantry.create(name)
-        prGreen(f"Added: {pantry.owner}'s Pantry")
+        Pantry.is_owner_new(name)
+        Pantry.create(name)
+        prGreen(f"Added: {name}'s Pantry")
     except Exception as exc:
-        prRed("Error creating pantry: ")
-        prRed(exc)
+        prRed(f"Error creating pantry: {exc}")
 
-def update_owner(pantry_id):
+def update_owner(pantry):
     prLightPurple(" \n--- Updating Pantry ---")
-    if pantry := Pantry.find_by_id(pantry_id):
-        try:
-            name = input("Enter name of the pantry's new owner > ").strip().capitalize()
-            while Pantry.find_by_owner(name):
-                prRed("This person already has a pantry.")
-                name = input("Enter name of the pantry's new owner > ").strip().capitalize()
-            pantry.owner = name
-            pantry.update()
-            prGreen(f'Updated: {name}')
-        except Exception as exc:
-            prRed("Error updating pantry: ")
-            prRed(exc)
-    else:
-        prRed(f"Pantry does not exist")
+    name = input("Enter name of the pantry's new owner > ").strip().capitalize()
+    try:
+        Pantry.is_owner_new(name)
+        pantry.owner = name
+        pantry.update()
+        prGreen(f'Updated: {name}')
+    except Exception as exc:
+        prRed(f"Error creating pantry: {exc}")
 
-def list_foods(pantry_id):
-    foods = Food.find_by_pantry(pantry_id)
-    # foods = pantry.foods()
-    if len(foods) > 0:
-        x = 0
-        for food in foods:
-            print(f"{x}. {food.name} ({food.qty})")  
-            x += 1
-    else:
+def list_foods(pantry):
+    foods = pantry.foods()
+    for i, food in enumerate(foods, 1):
+        print(f"{i}. {food.name} ({food.qty})")  
+    if len(foods) == 0:
         print("This pantry is empty.")
 
 def add_food(pantry_id):
@@ -100,7 +86,8 @@ def add_food(pantry_id):
         prRed(exc)
 
 def delete_pantry(pantry_id = None):
-    if Pantry.get_all() == None:
+    pantries = Pantry.get_all()
+    if pantries == None:
         prRed("There are no pantries to delete.")
     elif pantry_id != None: 
         foods = Food.find_by_pantry(pantry_id)
@@ -110,16 +97,14 @@ def delete_pantry(pantry_id = None):
         pantry.delete()
     else:
         prLightPurple(" \n--- Deleting Pantry ---")
-        pantries = Pantry.get_all()
         choice = input("Enter the pantry number > ")
         if choice.isnumeric():
-            choice = int(choice)
-            if 0 <= choice <= len(pantries):
-                pantry = pantries[choice]
-                foods = Food.find_by_pantry(pantry.id)
+            choice = int(choice) - 1
+            if 0 <= choice <= len(pantries) - 1:
+                foods = pantries[choice].foods()
                 for food in foods:
                     food.delete()
-                pantry.delete()
+                pantries[choice].delete()
             else:
                 prRed("Pantry does not exist.")
         else:

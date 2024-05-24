@@ -55,11 +55,11 @@ def sub_1():
 
 def sub_2(pantry):
     prLightPurple(f" \n--- {pantry.owner}'s Pantry ---")
-    list_foods(pantry.id)
+    list_foods(pantry)
     owner_menu()
     choice = input("> ")
     if choice == "1":
-        update_owner(pantry.id)
+        update_owner(pantry)
     elif choice == "2":
         delete_pantry(pantry.id)
         sub_1()
